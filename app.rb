@@ -2,24 +2,30 @@ require_relative "time_formatter"
 class App
   
   PROTOCOL = 'HTTP/1.1'
-  HOST = 'localhost:9292'
   PATH = '/time'
   METHOD = 'GET'
 
   def call(env)
     if check_request(env)
       time = TimeFormatter.new(env)
-      status = time.convert_format[:status]
-      body = [time.convert_format[:body]]
+      if time.time_format_correct?
+        status = 200
+        body = [time.current_time_formatted("-")]
+      else
+        status = 400
+      end
     else
       status = 404
       body = ['Bad request']
     end
-
-    [status, headers, body] 
+    response(status, headers, body) 
   end
 
   private
+
+  def response(status, headers,body)
+    [status, headers, body] 
+  end
 
   def check_request(env)
     check_protocol(env) && check_host(env) && check_path(env) && check_method(env)
