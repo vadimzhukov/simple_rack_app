@@ -12,19 +12,19 @@ class TimeFormatter
   end
 
   def current_time_formatted(delimeter)
-    Time.nowformat(delimeter)
+    Time.now.strftime(format_time(delimeter))
   end
 
   def unknown_time_format
-    "Unknown time format: #{params_values_array - ALLOWED_PARAMS}"
+    "Unknown time format: #{@params_values_array - ALLOWED_PARAMS}"
   end
 
 
   def time_format_correct?
-    @params_key == 'format' && (params_values_array & ALLOWED_PARAMS).count == params_values_array.count
+    @params_key == 'format' && (@params_values_array & ALLOWED_PARAMS).count == @params_values_array.count
   end
 
-  def format(delimeter)
+  def format_time(delimeter)
     @params_values_array.map { |i| i = DATE_FORMAT[i.to_sym] }.join(delimeter)
   end
 

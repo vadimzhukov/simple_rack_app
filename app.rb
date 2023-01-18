@@ -13,11 +13,13 @@ class App
         body = [time.current_time_formatted("-")]
       else
         status = 400
+        body = [time.unknown_time_format]
       end
     else
       status = 404
       body = ['Bad request']
     end
+    
     response(status, headers, body) 
   end
 
@@ -28,7 +30,7 @@ class App
   end
 
   def check_request(env)
-    check_protocol(env) && check_host(env) && check_path(env) && check_method(env)
+    check_protocol(env) && check_path(env) && check_method(env)
   end
 
   def check_method(env)
@@ -41,10 +43,6 @@ class App
 
   def check_protocol(env)
     env['SERVER_PROTOCOL'] == PROTOCOL
-  end
-
-  def check_host(env)
-    env['HTTP_HOST'] == HOST
   end
 
   def headers
