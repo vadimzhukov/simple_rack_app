@@ -1,36 +1,29 @@
-require_relative "time_formatter"
+require_relative 'time_formatter'
 class App
-  
   PROTOCOL = 'HTTP/1.1'
   PATH = '/time'
   METHOD = 'GET'
 
   def call(env)
-    if check_request(env)
-      time = TimeFormatter.new(env)
-      if time.time_format_correct?
-        status = 200
-        body = [time.current_time_formatted("-")]
-      else
-        status = 400
-        body = [time.unknown_time_format]
-      end
+    return response(404, headers, 'Bad request') if bad_request?(env)
+
+    formatted_time = TimeFormatter.new(env)
+    formatted_time.call
+    if formatted_time.success?
+      response(200, headers, formatted_time.current_time_string)
     else
-      status = 404
-      body = ['Bad request']
+      response(400, headers, formatted_time.invalid_string)
     end
-    
-    response(status, headers, body) 
   end
 
   private
 
-  def response(status, headers,body)
-    [status, headers, body] 
+  def response(status, headers, body)
+    [status, headers, [body]]
   end
 
-  def check_request(env)
-    check_protocol(env) && check_path(env) && check_method(env)
+  def bad_request?(env)
+    !(check_protocol(env) && check_path(env) && check_method(env))
   end
 
   def check_method(env)
