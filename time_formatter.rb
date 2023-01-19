@@ -14,7 +14,7 @@ class TimeFormatter
   end
 
   def success?
-    time_format_correct?
+    @params_key == 'format' && (@params_values_array & DATE_FORMAT.keys).count == @params_values_array.count
   end
 
   def current_time_string
@@ -26,10 +26,6 @@ class TimeFormatter
   end
 
   private
-
-  def time_format_correct?
-    @params_key == 'format' && (@params_values_array & DATE_FORMAT.keys).count == @params_values_array.count
-  end
 
   def format_time
     @params_values_array.map { |i| i = DATE_FORMAT[i] }.join('-')
